@@ -6,7 +6,7 @@ use std::fs::{File, OpenOptions, create_dir_all, metadata};
 use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Mutex;
-use std::time::{SystemTime};
+use std::time::SystemTime;
 
 pub struct CustomLogs {
     file: Mutex<File>,
@@ -54,7 +54,12 @@ fn function() -> Option<String> {
             if let Some(name) = symbol.name() {
                 if !name.to_string().contains("log") && !name.to_string().contains("function") {
                     let name = name.to_string().replace("Server::", "");
-                    let name = name.to_string().split("::").next().unwrap_or(&name).to_string();
+                    let name = name
+                        .to_string()
+                        .split("::")
+                        .next()
+                        .unwrap_or(&name)
+                        .to_string();
                     return Some(name);
                 }
             }
@@ -65,6 +70,18 @@ fn function() -> Option<String> {
 
 impl log::Log for CustomLogs {
     fn enabled(&self, metadata: &Metadata) -> bool {
+        let target = metadata.target();
+
+        if target.starts_with("public_ip_address")
+            || target.starts_with("hyper_util")
+            || target.starts_with("tracing")
+            || target.starts_with("warp")
+            || target.starts_with("hyper")
+            || target.starts_with("reqwest")
+        {
+            return false;
+        }
+
         metadata.level() <= Level::Trace
     }
 
@@ -112,7 +129,7 @@ impl log::Log for CustomLogs {
             } else {
                 format!("[{}:{}]", category_colored, level_colored).bright_white()
             };
-            
+
             let msg_colored = match record.level() {
                 Level::Error => format!("{}", record.args()).red(),
                 Level::Warn => format!("{}", record.args()).yellow(),

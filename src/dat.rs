@@ -104,7 +104,7 @@ pub fn read_encrypted_dat(path: &str, aes_key: &[u8; 16]) -> Result<(Header, Vec
         let default_settings = Settings {
             websocket_port: 8080,
             http_port: 8000,
-            host: "localhost".to_string(),
+            host: "127.0.0.1".to_string(),
         };
         write_encrypted_dat(path, &default_header, &[], &default_settings)?;
         Ok((default_header, Vec::new(), default_settings))
