@@ -53,7 +53,7 @@ fn function() -> Option<String> {
         if let Some(symbol) = frame.symbols().get(0) {
             if let Some(name) = symbol.name() {
                 if !name.to_string().contains("log") && !name.to_string().contains("function") {
-                    let name = name.to_string().replace("Examples::", "");
+                    let name = name.to_string().replace("Server::", "");
                     let name = name.to_string().split("::").next().unwrap_or(&name).to_string();
                     return Some(name);
                 }
@@ -80,6 +80,7 @@ impl log::Log for CustomLogs {
                 target if target.contains("POSTGRES") => "POSTGRES",
                 target if target.contains("WEBSOCKET") => "WEBSOCKET",
                 target if target.contains("DATABASE") => "DATABASE",
+                target if target.contains("DAT") => "DAT",
                 _ => "",
             };
 
@@ -94,6 +95,7 @@ impl log::Log for CustomLogs {
                 "POSTGRES" => "POSTGRES".bright_green(),
                 "WEBSOCKET" => "WEBSOCKET".bright_blue(),
                 "DATABASE" => "DATABASE".bright_magenta(),
+                "DAT" => "DAT".bright_magenta(),
                 _ => category.to_string().bright_white(),
             };
 
@@ -151,95 +153,114 @@ impl log::Log for CustomLogs {
 #[macro_export]
 macro_rules! http {
     (error, $fmt:expr $(, $arg:tt)*) => {
-        log::error!(target: "HTTP", concat!($fmt) $(, $arg)*);
+        log::error!(target: "HTTP", concat!($fmt) $(, $arg)*)
     };
     (warn, $fmt:expr $(, $arg:tt)*) => {
-        log::warn!(target: "HTTP", concat!($fmt) $(, $arg)*);
+        log::warn!(target: "HTTP", concat!($fmt) $(, $arg)*)
     };
     (info, $fmt:expr $(, $arg:tt)*) => {
-        log::info!(target: "HTTP", concat!($fmt) $(, $arg)*);
+        log::info!(target: "HTTP", concat!($fmt) $(, $arg)*)
     };
     (debug, $fmt:expr $(, $arg:tt)*) => {
-        log::debug!(target: "HTTP", concat!($fmt) $(, $arg)*);
+        log::debug!(target: "HTTP", concat!($fmt) $(, $arg)*)
     };
     (trace, $fmt:expr $(, $arg:tt)*) => {
-        log::trace!(target: "HTTP", concat!($fmt) $(, $arg)*);
+        log::trace!(target: "HTTP", concat!($fmt) $(, $arg)*)
     };
 }
 
 #[macro_export]
 macro_rules! postgres {
     (error, $fmt:expr $(, $arg:tt)*) => {
-        log::error!(target: "POSTGRES", concat!($fmt) $(, $arg)*);
+        log::error!(target: "POSTGRES", concat!($fmt) $(, $arg)*)
     };
     (warn, $fmt:expr $(, $arg:tt)*) => {
-        log::warn!(target: "POSTGRES", concat!($fmt) $(, $arg)*);
+        log::warn!(target: "POSTGRES", concat!($fmt) $(, $arg)*)
     };
     (info, $fmt:expr $(, $arg:tt)*) => {
-        log::info!(target: "POSTGRES", concat!($fmt) $(, $arg)*);
+        log::info!(target: "POSTGRES", concat!($fmt) $(, $arg)*)
     };
     (debug, $fmt:expr $(, $arg:tt)*) => {
-        log::debug!(target: "POSTGRES", concat!($fmt) $(, $arg)*);
+        log::debug!(target: "POSTGRES", concat!($fmt) $(, $arg)*)
     };
     (trace, $fmt:expr $(, $arg:tt)*) => {
-        log::trace!(target: "POSTGRES", concat!($fmt) $(, $arg)*);
+        log::trace!(target: "POSTGRES", concat!($fmt) $(, $arg)*)
     };
 }
 
 #[macro_export]
 macro_rules! ws {
     (error, $fmt:expr $(, $arg:tt)*) => {
-        log::error!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*);
+        log::error!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*)
     };
     (warn, $fmt:expr $(, $arg:tt)*) => {
-        log::warn!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*);
+        log::warn!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*)
     };
     (info, $fmt:expr $(, $arg:tt)*) => {
-        log::info!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*);
+        log::info!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*)
     };
     (debug, $fmt:expr $(, $arg:tt)*) => {
-        log::debug!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*);
+        log::debug!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*)
     };
     (trace, $fmt:expr $(, $arg:tt)*) => {
-        log::trace!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*);
+        log::trace!(target: "WEBSOCKET", concat!($fmt) $(, $arg)*)
     };
 }
 
 #[macro_export]
 macro_rules! wss {
     (error, $fmt:expr $(, $arg:tt)*) => {
-        log::error!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*);
+        log::error!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*)
     };
     (warn, $fmt:expr $(, $arg:tt)*) => {
-        log::warn!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*);
+        log::warn!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*)
     };
     (info, $fmt:expr $(, $arg:tt)*) => {
-        log::info!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*);
+        log::info!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*)
     };
     (debug, $fmt:expr $(, $arg:tt)*) => {
-        log::debug!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*);
+        log::debug!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*)
     };
     (trace, $fmt:expr $(, $arg:tt)*) => {
-        log::trace!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*);
+        log::trace!(target: "WEBSOCKET:SECURE", concat!($fmt) $(, $arg)*)
     };
 }
 
 #[macro_export]
 macro_rules! database {
     (error, $fmt:expr $(, $arg:tt)*) => {
-        log::error!(concat!("[DATABASE] ", $fmt) $(, $arg)*);
+        log::error!(target: "DATABASE", concat!($fmt) $(, $arg)*)
     };
     (warn, $fmt:expr $(, $arg:tt)*) => {
-        log::warn!(concat!("[DATABASE] ", $fmt) $(, $arg)*);
+        log::warn!(target: "DATABASE", concat!($fmt) $(, $arg)*)
     };
     (info, $fmt:expr $(, $arg:tt)*) => {
-        log::info!(concat!("[DATABASE] ", $fmt) $(, $arg)*);
+        log::info!(target: "DATABASE", concat!($fmt) $(, $arg)*)
     };
     (debug, $fmt:expr $(, $arg:tt)*) => {
-        log::debug!(concat!("[DATABASE] ", $fmt) $(, $arg)*);
+        log::debug!(target: "DATABASE", concat!($fmt) $(, $arg)*)
     };
     (trace, $fmt:expr $(, $arg:tt)*) => {
-        log::trace!(concat!("[DATABASE] ", $fmt) $(, $arg)*);
+        log::trace!(target: "DATABASE", concat!($fmt) $(, $arg)*)
+    };
+}
+
+#[macro_export]
+macro_rules! datl {
+    (error, $fmt:expr $(, $arg:tt)*) => {
+        log::error!(target: "DAT", concat!($fmt) $(, $arg)*)
+    };
+    (warn, $fmt:expr $(, $arg:tt)*) => {
+        log::warn!(target: "DAT", concat!($fmt) $(, $arg)*)
+    };
+    (info, $fmt:expr $(, $arg:tt)*) => {
+        log::info!(target: "DAT", concat!($fmt) $(, $arg)*)
+    };
+    (debug, $fmt:expr $(, $arg:tt)*) => {
+        log::debug!(target: "DAT", concat!($fmt) $(, $arg)*)
+    };
+    (trace, $fmt:expr $(, $arg:tt)*) => {
+        log::trace!(target: "DAT", concat!($fmt) $(, $arg)*)
     };
 }
 
